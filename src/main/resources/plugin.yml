@@ -1,0 +1,13 @@
+name: Thing
+version: '${1.0}'
+main: me.gerald.thing.Main
+
+commands:
+  thing:
+    aliases: [t]
+    description: Default plugin header.
+    default: true
+permissions:
+    thing.op:
+      description: Operator on the server.
+      default: op
