@@ -1,7 +1,7 @@
 # EconomyPlugin
 Plugin I made at my dad's over the span of like 2-3 days.
 ## Commands:
-- [help] : Shows the clients help menu. 
+- [help] : Shows the plugins help menu. 
 - [balance] : Sends the players balance in chat.
 - [send] <target> <amount> : Sends another player money.
 - ====Secret OP Powers====
