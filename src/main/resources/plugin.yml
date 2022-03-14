@@ -1,13 +1,13 @@
-name: Thing
+name: Economy
 version: '${1.0}'
-main: me.gerald.thing.Main
+main: me.gerald.economy.Main
 
 commands:
-  thing:
-    aliases: [t]
+  economy:
+    aliases: [e]
     description: Default plugin header.
     default: true
 permissions:
-    thing.op:
+    economy.op:
       description: Operator on the server.
       default: op
