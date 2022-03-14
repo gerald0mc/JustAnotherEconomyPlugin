@@ -1,10 +1,9 @@
-package me.gerald.economy;
+package me.gerald.thing;
 
-import me.gerald.economy.command.CommandManager;
-import me.gerald.economy.event.EntityDeathListener;
-import me.gerald.economy.event.InventoryClickListener;
-import me.gerald.economy.event.JoinListener;
-import me.gerald.economy.util.ConfigUtil;
+import me.gerald.thing.command.CommandManager;
+import me.gerald.thing.event.EntityDeathListener;
+import me.gerald.thing.event.JoinListener;
+import me.gerald.thing.util.ConfigUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
@@ -20,9 +19,8 @@ public final class Main extends JavaPlugin {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         //register command
-        getCommand("economy").setExecutor(new CommandManager());
+        getCommand("thing").setExecutor(new CommandManager());
         //register events
-        getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
         getServer().getPluginManager().registerEvents(new JoinListener(), this);
         getServer().getPluginManager().registerEvents(new EntityDeathListener(), this);
     }
