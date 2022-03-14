@@ -6,6 +6,7 @@ Plugin I made at my dad's over the span of like 2-3 days.
 - [send] [target] [amount] : Sends another player money.
 - ====Secret OP Powers====
 - [balance] [player] : Sends another players money in chat.
+- [setbal] [player] [value] : Sets a players balance to the value.
 - [set] [entity] [value] : Sets a settings value to value.
 - [list] : Shows all the settings and their values.
 - [reload] : Reloads the config.
