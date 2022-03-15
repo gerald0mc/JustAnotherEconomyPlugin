@@ -1,7 +1,10 @@
-# Just Another EconomyPlugin
-Plugin I made at my dad's over the span of like 2-3 days.
+# Just Another Economy Plugin
+
+This is a plugin I started just as a little thing to keep me from being bored. It has two seperate configs one for player balances as well as the config.yml which has the values for the mob money drops as well as a toggl for it.
+
 ## Commands:
-- [help] : Shows the plugins help menu. 
+
+- [help] : Shows the plugins help menu.
 - [balance] : Sends the players balance in chat.
 - [send] [target] [amount] : Sends another player money.
 - [gui] : Shows the plugin GUI.
@@ -9,27 +12,8 @@ Plugin I made at my dad's over the span of like 2-3 days.
 - [balance] [player] : Sends another players balance in chat.
 - [setbal] [player] [value] : Sets a players balance to the value.
 - [set] [entity] [value] : Sets a settings value to value.
-- [list] : Shows all the settings and their values.
+- [l ist] : Shows all the settings and their values.
 - [reload] : Reloads the config.
-## Who I stole from?
-  - Thanks Kody Simpson for the ConfigUtil I use
-  - 
-# Just Another Economy Plugin
-
-This is a plugin I started just as a little thing to keep me from being bored. It has two seperate configs one for player balances as well as the config.yml which has the values for the mob money drops as well as a toggl for it.
-
-## Commands:
-
-[help] : Shows the plugins help menu.
-[balance] : Sends the players balance in chat.
-[send] [target] [amount] : Sends another player money.
-[gui] : Shows the plugin GUI.
-====Secret OP Powers====
-[balance] [player] : Sends another players balance in chat.
-[setbal] [player] [value] : Sets a players balance to the value.
-[set] [entity] [value] : Sets a settings value to value.
-[l ist] : Shows all the settings and their values.
-[reload] : Reloads the config.
 
 ## GUI'S:
 
