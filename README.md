@@ -1,6 +1,8 @@
 # Just Another Economy Plugin
 
-This is a plugin I started just as a little thing to keep me from being bored. It has two seperate configs one for player balances as well as the config.yml which has the values for the mob money drops as well as a toggl for it.
+This is a plugin I started just as a little thing to keep me from being bored. It has two seperate configs one for player balances as well as the config.yml which has the values for the mob money drops as well as a toggle for it.
+
+[Spigot Page](https://www.spigotmc.org/resources/just-another-economy-plugin.100709/) 
 
 ## Commands:
 
