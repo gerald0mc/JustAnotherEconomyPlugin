@@ -2,6 +2,7 @@ package me.gerald.economy.command;
 
 import me.gerald.economy.Main;
 import me.gerald.economy.util.ConfigUtil;
+import me.gerald.economy.util.CustomItem;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,14 +38,8 @@ public class CommandManager implements CommandExecutor {
                 return true;
             case "gui":
                 Inventory gui = Bukkit.createInventory(player, 9, ChatColor.AQUA + "Economy GUI " + (sender.hasPermission("economy.op") ? ChatColor.RED + "OP Mode" : ""));
-                //stained glass
-                ItemStack glass = new ItemStack(Material.THIN_GLASS);
-                ItemMeta glassMeta = glass.getItemMeta();
-                glassMeta.setDisplayName(ChatColor.AQUA + "Free spot");
-                ArrayList<String> glassLore = new ArrayList<>();
-                glassLore.add(ChatColor.WHITE + "Cuz I'm freeeee...");
-                glassMeta.setLore(glassLore);
-                glass.setItemMeta(glassMeta);
+                //glass
+                CustomItem glass = new CustomItem(Material.THIN_GLASS, ChatColor.AQUA + "Free spot", new String[] {ChatColor.WHITE + "Cuz I'm freee..."});
                 //player info
                 ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (short) SkullType.PLAYER.ordinal());
                 ItemMeta skullMeta = skull.getItemMeta();
@@ -55,39 +50,21 @@ public class CommandManager implements CommandExecutor {
                 skullMeta.setLore(skullLore);
                 skull.setItemMeta(skullMeta);
                 //balance
-                ItemStack emerald = new ItemStack(Material.EMERALD);
-                ItemMeta emeraldMeta = emerald.getItemMeta();
-                emeraldMeta.setDisplayName(ChatColor.GREEN + "Balance");
-                ArrayList<String> emeraldLore = new ArrayList<>();
-                emeraldLore.add(ChatColor.AQUA + "$" + ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance"));
-                emeraldMeta.setLore(emeraldLore);
-                emerald.setItemMeta(emeraldMeta);
+                CustomItem emerald = new CustomItem(Material.EMERALD, ChatColor.GREEN + "Balance", new String[] {ChatColor.AQUA + "$" + ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance")});
                 //reload
-                ItemStack lava = new ItemStack(Material.LAVA_BUCKET);
-                ItemMeta lavaMeta = lava.getItemMeta();
-                lavaMeta.setDisplayName(ChatColor.RED + "Reload");
-                ArrayList<String> lavaLore = new ArrayList<>();
-                lavaLore.add(ChatColor.WHITE + "Reloads the plugin config.");
-                lavaMeta.setLore(lavaLore);
-                lava.setItemMeta(lavaMeta);
+                CustomItem lava = new CustomItem(Material.LAVA_BUCKET, ChatColor.RED + "Reload", new String[] {ChatColor.WHITE + "Reloads the plugin config."});
                 //list settings
-                ItemStack map = new ItemStack(Material.EMPTY_MAP);
-                ItemMeta mapMeta = map.getItemMeta();
-                mapMeta.setDisplayName(ChatColor.AQUA + "List Settings");
-                ArrayList<String> mapLore = new ArrayList<>();
-                mapLore.add(ChatColor.WHITE + "Shows all settings for the plugin and their values.");
-                mapMeta.setLore(mapLore);
-                map.setItemMeta(mapMeta);
+                CustomItem map = new CustomItem(Material.EMPTY_MAP, ChatColor.AQUA + "List Settings", new String[] {ChatColor.WHITE + "Shows all settings for the plugin and their values."});
 
-                ItemStack[] menuItems = {glass,
-                        glass,
+                ItemStack[] menuItems = {glass.getItem(),
+                        glass.getItem(),
                         skull,
-                        emerald,
-                        glass,
-                        (sender.hasPermission("economy.op") ? lava : glass),
-                        (sender.hasPermission("economy.op") ? map : glass),
-                        glass,
-                        glass};
+                        emerald.getItem(),
+                        glass.getItem(),
+                        (sender.hasPermission("economy.op") ? lava.getItem() : glass.getItem()),
+                        (sender.hasPermission("economy.op") ? map.getItem() : glass.getItem()),
+                        glass.getItem(),
+                        glass.getItem()};
                 gui.setContents(menuItems);
                 player.openInventory(gui);
                 return true;
@@ -133,6 +110,12 @@ public class CommandManager implements CommandExecutor {
                 ConfigUtil.getBalance().set(target.getDisplayName() + " Balance", ConfigUtil.getBalance().getInt(target.getDisplayName() + "Balance") + amountBeingSent);
                 target.sendMessage(ChatColor.GREEN + "Sent " + ChatColor.AQUA + "$" + amountBeingSent + ChatColor.GREEN + " by " + ChatColor.YELLOW + player.getDisplayName());
                 return true;
+            case "shop":
+                switch (args[1]) {
+                    case "":
+                        return true;
+                }
+                return true;
             //op commands
             case "set":
                 if(sender.hasPermission("economy.op")) {
@@ -141,13 +124,14 @@ public class CommandManager implements CommandExecutor {
                         return true;
                     }
                     String entity = args[1];
-                    String setting = getSetting(entity);
+                    String entityUppercase = entity.substring(0, 1).toUpperCase() + entity.substring(1);
+                    String setting = entityUppercase + "Value";
                     if(args.length == 2) {
                         sender.sendMessage(ChatColor.RED + "Please specify what value you would like to set " + entity + " to.");
                         return true;
                     }
                     String value = args[2];
-                    if(!setting.equalsIgnoreCase("null")) {
+                    if(Main.INSTANCE.getConfig().contains(setting)) {
                         Main.INSTANCE.getConfig().addDefault(setting, Integer.valueOf(value));
                         Main.INSTANCE.getConfig().set(setting, Integer.valueOf(value));
                         Main.INSTANCE.saveConfig();
@@ -156,11 +140,10 @@ public class CommandManager implements CommandExecutor {
                     }else {
                         sender.sendMessage(ChatColor.RED + "That setting doesn't exist.");
                     }
-                    return true;
                 }else {
                     sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
-                    return true;
                 }
+                return true;
             case "list":
                 if(sender.hasPermission("economy.op")) {
                     sender.sendMessage(ChatColor.LIGHT_PURPLE + "Thing " + ChatColor.GREEN + "Settings");
@@ -206,43 +189,5 @@ public class CommandManager implements CommandExecutor {
                 return true;
         }
         return false;
-    }
-
-    public String getSetting(String setting) {
-        if(setting.equalsIgnoreCase("player")) {
-            return "PlayerValue";
-        }else if(setting.equalsIgnoreCase("zombie")) {
-            return "ZombieValue";
-        }else if(setting.equalsIgnoreCase("skeleton")) {
-            return "SkeletonValue";
-        }else if(setting.equalsIgnoreCase("spider")) {
-            return "SpiderValue";
-        }else if(setting.equalsIgnoreCase("creeper")) {
-            return "CreeperValue";
-        }else if(setting.equalsIgnoreCase("blaze")) {
-            return "BlazeValue";
-        }else if(setting.equalsIgnoreCase("witch")) {
-            return "WitchValue";
-        }else if(setting.equalsIgnoreCase("enderman")) {
-            return "EndermanValue";
-        }else if(setting.equalsIgnoreCase("cow")) {
-            return "CowValue";
-        }else if(setting.equalsIgnoreCase("sheep")) {
-            return "SheepValue";
-        }else if(setting.equalsIgnoreCase("pig")) {
-            return "PigValue";
-        }else if(setting.equalsIgnoreCase("chicken")) {
-            return "ChickenValue";
-        }else {
-            return "null";
-        }
-    }
-
-    public int getHealth(Player player) {
-        return (int) StrictMath.ceil(damageable(player).getHealth());
-    }
-
-    public Damageable damageable(Player player) {
-        return player;
     }
 }
