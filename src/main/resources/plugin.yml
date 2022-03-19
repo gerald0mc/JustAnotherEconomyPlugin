@@ -1,5 +1,5 @@
 name: Economy
-version: '${1.0}'
+version: '1.2'
 main: me.gerald.economy.Main
 
 commands:

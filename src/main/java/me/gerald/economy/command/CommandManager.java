@@ -33,6 +33,7 @@ public class CommandManager implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "====" + ChatColor.RED + "Secret OP Powers" + ChatColor.GREEN + "====");
                     sender.sendMessage(ChatColor.AQUA + "[set] <entity> <value>" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Set the value of a entity setting.");
                     sender.sendMessage(ChatColor.AQUA + "[list]" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Lists all settings in the plugin.");
+                    sender.sendMessage(ChatColor.AQUA + "[remove] <player>" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Removes a players shop listing from the shop.");
                     sender.sendMessage(ChatColor.AQUA + "[setbal] <player> <value>" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Set the players balance to value.");
                     sender.sendMessage(ChatColor.AQUA + "[reload]" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Reloads the config of the plugin.");
                 }
