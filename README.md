@@ -9,6 +9,7 @@ This is a plugin I started just as a little thing to keep me from being bored. I
 - [help] : Shows the plugins help menu.
 - [balance] : Sends the players balance in chat.
 - [send] [target] [amount] : Sends another player money.
+- [shop] [add [price], list, buy [playerName], remove] : Shop commands.
 - [gui] : Shows the plugin GUI.
 - ====Secret OP Powers====
 - [balance] [player] : Sends another players balance in chat.
