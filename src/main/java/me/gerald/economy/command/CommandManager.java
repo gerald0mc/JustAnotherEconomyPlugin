@@ -27,6 +27,7 @@ public class CommandManager implements CommandExecutor {
                 sender.sendMessage(ChatColor.AQUA + "[help]" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Sends the help menu in chat.");
                 sender.sendMessage(ChatColor.AQUA + "[balance]" + (sender.hasPermission("economy.op") ? " <player>" : "") + ChatColor.GRAY + ": " + ChatColor.GREEN + "Shows the balance of the player.");
                 sender.sendMessage(ChatColor.AQUA + "[send] <target> <amount>" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Sends a player an amount of money.");
+                sender.sendMessage(ChatColor.AQUA + "[shop] [add <price>, list, buy <playerName>, remove]" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Shop command as well as all the commands linked to it.");
                 sender.sendMessage(ChatColor.AQUA + "[gui]" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Shows the plugin GUI.");
                 if(sender.hasPermission("economy.op")) {
                     sender.sendMessage(ChatColor.GREEN + "====" + ChatColor.RED + "Secret OP Powers" + ChatColor.GREEN + "====");
@@ -112,8 +113,123 @@ public class CommandManager implements CommandExecutor {
                 return true;
             case "shop":
                 switch (args[1]) {
-                    case "":
+                    case "add":
+                        if(player.getItemInHand().getType() == Material.AIR) {
+                            sender.sendMessage(ChatColor.RED + "Please be holding the item you wish to put up for sale.");
+                            return true;
+                        }
+                        if(args.length == 2) {
+                            sender.sendMessage(ChatColor.RED + "Please specify how much you would like to post your item for.");
+                            return true;
+                        }
+                        int price1 = Integer.parseInt(args[2]);
+                        if(ConfigUtil.getShop().isSet(player.getDisplayName() + ".item")) {
+                            sender.sendMessage(ChatColor.RED + "You already have a active listing.");
+                            return true;
+                        }
+                        ConfigUtil.getShop().addDefault(player.getDisplayName() + ".item", player.getItemInHand().getType().name());
+                        ConfigUtil.getShop().set(player.getDisplayName() + ".item", player.getItemInHand().getType().name());
+                        ConfigUtil.getShop().addDefault(player.getDisplayName() + ".value", price1);
+                        ConfigUtil.getShop().set(player.getDisplayName() + ".value", price1);
+                        ConfigUtil.getShop().addDefault(player.getDisplayName() + ".quantity", player.getItemInHand().getAmount());
+                        ConfigUtil.getShop().set(player.getDisplayName() + ".quantity", player.getItemInHand().getAmount());
+                        ConfigUtil.save();
+                        ConfigUtil.reload();
+                        sender.sendMessage(ChatColor.GREEN + "Posted item to shop.");
+                        player.setItemInHand(new ItemStack(Material.AIR));
                         return true;
+                    case "list":
+                        sender.sendMessage(ChatColor.LIGHT_PURPLE + "Economy" + ChatColor.GREEN + " Shop" + ChatColor.GRAY + ":");
+                        for(Map.Entry<String, Object> entry : ConfigUtil.getShop().getValues(true).entrySet()) {
+                            Material item = Material.AIR;
+                            int value = 0;
+                            int quantity = 0;
+                            if(entry.getKey().contains("item") || entry.getKey().contains("value") || entry.getKey().contains("quantity")) {
+                                continue;
+                            }
+                            for(Map.Entry<String, Object> entry1 : ConfigUtil.getShop().getConfigurationSection(entry.getKey()).getValues(true).entrySet()) {
+                                switch (entry1.getKey()) {
+                                    case "item":
+                                        item = Material.getMaterial((String) entry1.getValue());
+                                        break;
+                                    case "value":
+                                        value = (int) entry1.getValue();
+                                        break;
+                                    case "quantity":
+                                        quantity = (int) entry1.getValue();
+                                        break;
+                                }
+                            }
+                            sender.sendMessage(ChatColor.GREEN + "Item" + ChatColor.GRAY + ": [" + ChatColor.AQUA + item.name() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Quantity" + ChatColor.GRAY + ": [" + ChatColor.AQUA + quantity + ChatColor.GRAY + "]" + ChatColor.GREEN + " Seller" + ChatColor.GRAY + ": [" + ChatColor.AQUA + entry.getKey() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Value" + ChatColor.GRAY + ": [" + ChatColor.AQUA + value + ChatColor.GRAY + "]");
+                        }
+                        return true;
+                    case "buy":
+                        if(args.length == 2) {
+                            sender.sendMessage(ChatColor.RED + "Please specify which player's item you are trying to buy.");
+                            return true;
+                        }
+                        String owner = args[2];
+                        if(ConfigUtil.getShop().isSet(owner)) {
+                            Material item = Material.getMaterial(ConfigUtil.getShop().getString(owner + ".item"));
+                            int price = ConfigUtil.getShop().getInt(owner + ".value");
+                            int quantity = ConfigUtil.getShop().getInt(owner + ".quantity");
+                            if(ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance") < price) {
+                                sender.sendMessage(ChatColor.RED + "You need " + ChatColor.AQUA + (price - ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance")) + ChatColor.RED + " more $ to buy this.");
+                                return true;
+                            }
+                            ConfigUtil.getBalance().set(player.getDisplayName() + " Balance", (ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance") - price));
+                            player.setItemInHand(new ItemStack(item, quantity));
+                            sender.sendMessage(ChatColor.GREEN + "Successfully bought the item.");
+                            ConfigUtil.getShop().set(owner + ".item", null);
+                            ConfigUtil.getShop().set(owner + ".value", null);
+                            ConfigUtil.getShop().set(owner + ".quantity", null);
+                            ConfigUtil.getShop().set(owner, null);
+                            ConfigUtil.save();
+                            ConfigUtil.reload();
+                        }else {
+                            sender.sendMessage(ChatColor.RED + "There is no active listing from that player.");
+                        }
+                        return true;
+                    case "remove":
+                        switch (args.length) {
+                            case 2:
+                                if(ConfigUtil.getShop().isSet(player.getDisplayName() + ".item")) {
+                                    Material item = Material.getMaterial(ConfigUtil.getShop().getString(player.getDisplayName() + ".item"));
+                                    int quantity = ConfigUtil.getShop().getInt(player.getDisplayName() + ".quantity");
+                                    if(player.getItemInHand().getType() != Material.AIR) {
+                                        sender.sendMessage(ChatColor.RED + "Please make sure you have a empty hand.");
+                                    }
+                                    ConfigUtil.getShop().set(player.getDisplayName() + ".item", null);
+                                    ConfigUtil.getShop().set(player.getDisplayName() + ".value", null);
+                                    ConfigUtil.getShop().set(player.getDisplayName() + ".quantity", null);
+                                    ConfigUtil.getShop().set(player.getDisplayName(), null);
+                                    ConfigUtil.save();
+                                    ConfigUtil.reload();
+                                    player.setItemInHand(new ItemStack(item, quantity));
+                                    sender.sendMessage(ChatColor.GREEN + "Removed " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GREEN + " from the shop.");
+                                }else {
+                                    sender.sendMessage(ChatColor.RED + "You don't have a active listing to remove.");
+                                }
+                                return true;
+                            case 3:
+                                if(sender.hasPermission("economy.op")) {
+                                    String targetPlayer = args[2];
+                                    if(ConfigUtil.getShop().isSet(targetPlayer + ".item")) {
+                                        ConfigUtil.getShop().set(targetPlayer + ".item", null);
+                                        ConfigUtil.getShop().set(targetPlayer + ".value", null);
+                                        ConfigUtil.getShop().set(targetPlayer + ".quantity", null);
+                                        ConfigUtil.getShop().set(targetPlayer, null);
+                                        ConfigUtil.save();
+                                        ConfigUtil.reload();
+                                        sender.sendMessage(ChatColor.GREEN + "Removed " + ChatColor.AQUA + targetPlayer + ChatColor.GREEN + " from the shop.");
+                                    }else {
+                                        sender.sendMessage(ChatColor.RED + "Shop doesn't seem to contain this person please make sure you are typing it in with everything correct (Caps included)");
+                                    }
+                                }else {
+                                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                                }
+                                return true;
+                        }
                 }
                 return true;
             //op commands

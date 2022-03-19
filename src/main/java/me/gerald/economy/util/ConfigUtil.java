@@ -12,6 +12,9 @@ public class ConfigUtil {
     private static File balanceFile;
     private static FileConfiguration balanceFileConfig;
 
+    private static File shopFile;
+    private static FileConfiguration shopFileConfig;
+
     //Finds or generates the custom config file
     public static void setup(){
         //balance file
@@ -22,11 +25,20 @@ public class ConfigUtil {
             }catch (IOException ignored){ }
         }
         balanceFileConfig = YamlConfiguration.loadConfiguration(balanceFile);
+
+        shopFile = new File(Main.INSTANCE.getDataFolder(), "shop.yml");
+        if (!shopFile.exists()){
+            try{
+                shopFile.createNewFile();
+            }catch (IOException ignored){ }
+        }
+        shopFileConfig = YamlConfiguration.loadConfiguration(shopFile);
     }
 
     public static void save(){
         try{
             balanceFileConfig.save(balanceFile);
+            shopFileConfig.save(shopFile);
         }catch (IOException e){
             System.out.println("Couldn't save file.");
         }
@@ -34,9 +46,14 @@ public class ConfigUtil {
 
     public static void reload(){
         balanceFileConfig = YamlConfiguration.loadConfiguration(balanceFile);
+        shopFileConfig = YamlConfiguration.loadConfiguration(shopFile);
     }
 
     public static FileConfiguration getBalance(){
         return balanceFileConfig;
+    }
+
+    public static FileConfiguration getShop() {
+        return shopFileConfig;
     }
 }
