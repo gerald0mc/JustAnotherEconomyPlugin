@@ -26,7 +26,7 @@ public class EntityDeathListener implements Listener {
         if(entity instanceof Player) {
             return "Player";
         }else if(entity instanceof Zombie) {
-            return "Zlayer";
+            return "Zombie";
         }else if(entity instanceof Skeleton) {
             return "Skeleton";
         }else if(entity instanceof Spider) {
