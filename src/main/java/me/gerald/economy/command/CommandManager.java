@@ -170,6 +170,10 @@ public class CommandManager implements CommandExecutor {
                             return true;
                         }
                         String owner = args[2];
+                        if(player.getDisplayName().equalsIgnoreCase(owner)) {
+                            sender.sendMessage(ChatColor.RED + "You can't buy your own item off the market.");
+                            return true;
+                        }
                         if(ConfigUtil.getShop().isSet(owner)) {
                             Material item = Material.getMaterial(ConfigUtil.getShop().getString(owner + ".item"));
                             int price = ConfigUtil.getShop().getInt(owner + ".value");

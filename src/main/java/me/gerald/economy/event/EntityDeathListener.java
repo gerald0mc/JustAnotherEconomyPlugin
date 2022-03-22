@@ -18,6 +18,7 @@ public class EntityDeathListener implements Listener {
             ConfigUtil.getBalance().addDefault(killer.getDisplayName() + " Balance", ConfigUtil.getBalance().getInt(killer.getDisplayName() + " Balance") + (getEntityName(event.getEntity()).equalsIgnoreCase("Unknown") ? 5 : Main.INSTANCE.getConfig().getInt(getEntityName(event.getEntity()) + "Value")));
             ConfigUtil.getBalance().set(killer.getDisplayName() + " Balance", ConfigUtil.getBalance().getInt(killer.getDisplayName() + " Balance") + (getEntityName(event.getEntity()).equalsIgnoreCase("Unknown") ? 5 : Main.INSTANCE.getConfig().getInt(getEntityName(event.getEntity()) + "Value")));
             ConfigUtil.save();
+            ConfigUtil.reload();
             killer.sendMessage(ChatColor.GREEN + "Killed a entity named " + ChatColor.YELLOW + getEntityName(event.getEntity()) + ChatColor.GREEN + " and received " + ChatColor.AQUA + "$" + (getEntityName(event.getEntity()).equalsIgnoreCase("Unknown") ? 5 : Main.INSTANCE.getConfig().getInt(getEntityName(event.getEntity()) + "Value")));
         }
     }
