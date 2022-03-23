@@ -134,6 +134,8 @@ public class CommandManager implements CommandExecutor {
                         ConfigUtil.getShop().set(player.getDisplayName() + ".value", price1);
                         ConfigUtil.getShop().addDefault(player.getDisplayName() + ".quantity", player.getItemInHand().getAmount());
                         ConfigUtil.getShop().set(player.getDisplayName() + ".quantity", player.getItemInHand().getAmount());
+                        ConfigUtil.getShop().addDefault(player.getDisplayName() + ".durability", player.getItemInHand().getDurability());
+                        ConfigUtil.getShop().set(player.getDisplayName() + ".durability", player.getItemInHand().getDurability());
                         ConfigUtil.save();
                         ConfigUtil.reload();
                         sender.sendMessage(ChatColor.GREEN + "Posted item to shop.");
@@ -145,7 +147,8 @@ public class CommandManager implements CommandExecutor {
                             Material item = Material.AIR;
                             int value = 0;
                             int quantity = 0;
-                            if(entry.getKey().contains("item") || entry.getKey().contains("value") || entry.getKey().contains("quantity")) {
+                            short durability = 0;
+                            if(entry.getKey().contains("item") || entry.getKey().contains("value") || entry.getKey().contains("quantity") || entry.getKey().contains("durability")) {
                                 continue;
                             }
                             for(Map.Entry<String, Object> entry1 : ConfigUtil.getShop().getConfigurationSection(entry.getKey()).getValues(true).entrySet()) {
@@ -159,9 +162,13 @@ public class CommandManager implements CommandExecutor {
                                     case "quantity":
                                         quantity = (int) entry1.getValue();
                                         break;
+                                    case "durability":
+                                        int value1 = (int) entry1.getValue();
+                                        durability = (short) value1;
+                                        break;
                                 }
                             }
-                            sender.sendMessage(ChatColor.GREEN + "Item" + ChatColor.GRAY + ": [" + ChatColor.AQUA + item.name() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Quantity" + ChatColor.GRAY + ": [" + ChatColor.AQUA + quantity + ChatColor.GRAY + "]" + ChatColor.GREEN + " Seller" + ChatColor.GRAY + ": [" + ChatColor.AQUA + entry.getKey() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Value" + ChatColor.GRAY + ": [" + ChatColor.AQUA + value + ChatColor.GRAY + "]");
+                            sender.sendMessage(ChatColor.GREEN + "Item" + ChatColor.GRAY + ": [" + ChatColor.AQUA + item.name() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Durability" + ChatColor.GRAY + ": [" + ChatColor.AQUA + durability + ChatColor.GRAY + "]" + ChatColor.GREEN + " Quantity" + ChatColor.GRAY + ": [" + ChatColor.AQUA + quantity + ChatColor.GRAY + "]" + ChatColor.GREEN + " Seller" + ChatColor.GRAY + ": [" + ChatColor.AQUA + entry.getKey() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Value" + ChatColor.GRAY + ": [" + ChatColor.AQUA + value + ChatColor.GRAY + "]");
                         }
                         return true;
                     case "buy":
@@ -178,16 +185,21 @@ public class CommandManager implements CommandExecutor {
                             Material item = Material.getMaterial(ConfigUtil.getShop().getString(owner + ".item"));
                             int price = ConfigUtil.getShop().getInt(owner + ".value");
                             int quantity = ConfigUtil.getShop().getInt(owner + ".quantity");
+                            int dura = ConfigUtil.getShop().getInt(owner + ".durability");
+                            short durability = (short) dura;
+                            ItemStack newItem = new ItemStack(item, quantity);
+                            newItem.setDurability(durability);
                             if(ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance") < price) {
                                 sender.sendMessage(ChatColor.RED + "You need " + ChatColor.AQUA + (price - ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance")) + ChatColor.RED + " more $ to buy this.");
                                 return true;
                             }
                             ConfigUtil.getBalance().set(player.getDisplayName() + " Balance", (ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance") - price));
-                            player.setItemInHand(new ItemStack(item, quantity));
+                            player.setItemInHand(newItem);
                             sender.sendMessage(ChatColor.GREEN + "Successfully bought the item.");
                             ConfigUtil.getShop().set(owner + ".item", null);
                             ConfigUtil.getShop().set(owner + ".value", null);
                             ConfigUtil.getShop().set(owner + ".quantity", null);
+                            ConfigUtil.getShop().set(owner + ".durability", null);
                             ConfigUtil.getShop().set(owner, null);
                             ConfigUtil.save();
                             ConfigUtil.reload();
@@ -201,16 +213,22 @@ public class CommandManager implements CommandExecutor {
                                 if(ConfigUtil.getShop().isSet(player.getDisplayName() + ".item")) {
                                     Material item = Material.getMaterial(ConfigUtil.getShop().getString(player.getDisplayName() + ".item"));
                                     int quantity = ConfigUtil.getShop().getInt(player.getDisplayName() + ".quantity");
+                                    int dura = ConfigUtil.getShop().getInt(player.getDisplayName() + ".durability");
+                                    short durability = (short) dura;
+                                    ItemStack newItem = new ItemStack(item, quantity);
+                                    newItem.setDurability(durability);
                                     if(player.getItemInHand().getType() != Material.AIR) {
                                         sender.sendMessage(ChatColor.RED + "Please make sure you have a empty hand.");
+                                        return true;
                                     }
                                     ConfigUtil.getShop().set(player.getDisplayName() + ".item", null);
                                     ConfigUtil.getShop().set(player.getDisplayName() + ".value", null);
                                     ConfigUtil.getShop().set(player.getDisplayName() + ".quantity", null);
+                                    ConfigUtil.getShop().set(player.getDisplayName() + ".durability", null);
                                     ConfigUtil.getShop().set(player.getDisplayName(), null);
                                     ConfigUtil.save();
                                     ConfigUtil.reload();
-                                    player.setItemInHand(new ItemStack(item, quantity));
+                                    player.setItemInHand(newItem);
                                     sender.sendMessage(ChatColor.GREEN + "Removed " + ChatColor.AQUA + player.getDisplayName() + ChatColor.GREEN + " from the shop.");
                                 }else {
                                     sender.sendMessage(ChatColor.RED + "You don't have a active listing to remove.");
@@ -223,6 +241,9 @@ public class CommandManager implements CommandExecutor {
                                         ConfigUtil.getShop().set(targetPlayer + ".item", null);
                                         ConfigUtil.getShop().set(targetPlayer + ".value", null);
                                         ConfigUtil.getShop().set(targetPlayer + ".quantity", null);
+                                        if(ConfigUtil.getShop().isSet(targetPlayer + ".durability")) {
+                                            ConfigUtil.getShop().set(targetPlayer + ".durability", null);
+                                        }
                                         ConfigUtil.getShop().set(targetPlayer, null);
                                         ConfigUtil.save();
                                         ConfigUtil.reload();
