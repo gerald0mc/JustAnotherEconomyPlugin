@@ -2,7 +2,14 @@
 
 This is a plugin I started just as a little thing to keep me from being bored. It has two seperate configs one for player balances as well as the config.yml which has the values for the mob money drops as well as a toggle for it.
 
-[Spigot Page](https://www.spigotmc.org/resources/just-another-economy-plugin.100709/) 
+[Spigot Page](https://www.spigotmc.org/resources/just-another-economy-plugin.100709/)
+
+## Includes:
+
+- A shop with a nice amount of commands and full implementation.
+- A balance system with sending money and on mob/player death money.
+- Two configs used for high amounts of customizability with the plugin.
+- A being worked on set of GUI's including a Main GUI and a Setting GUI as well as me continuing to work on and add more GUI's.
 
 ## Commands:
 
