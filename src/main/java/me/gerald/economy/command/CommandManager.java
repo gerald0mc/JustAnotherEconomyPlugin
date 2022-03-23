@@ -22,6 +22,7 @@ public class CommandManager implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
         switch (args[0]) {
+            //a help menu    
             case "help":
                 sender.sendMessage(ChatColor.LIGHT_PURPLE + "Economy " + ChatColor.GREEN + "Help Menu");
                 sender.sendMessage(ChatColor.AQUA + "[help]" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Sends the help menu in chat.");
@@ -38,6 +39,7 @@ public class CommandManager implements CommandExecutor {
                     sender.sendMessage(ChatColor.AQUA + "[reload]" + ChatColor.GRAY + ": " + ChatColor.GREEN + "Reloads the config of the plugin.");
                 }
                 return true;
+            //shows the gui for the plugin    
             case "gui":
                 Inventory gui = Bukkit.createInventory(player, 9, ChatColor.AQUA + "Economy GUI " + (sender.hasPermission("economy.op") ? ChatColor.RED + "OP Mode" : ""));
                 //glass
@@ -70,6 +72,7 @@ public class CommandManager implements CommandExecutor {
                 gui.setContents(menuItems);
                 player.openInventory(gui);
                 return true;
+            //gets the player/players balance    
             case "balance":
                 int balance = ConfigUtil.getBalance().getInt(player.getDisplayName() + " Balance");
                 if(sender.hasPermission("economy.op")) {
@@ -89,6 +92,7 @@ public class CommandManager implements CommandExecutor {
                     sender.sendMessage(ChatColor.GREEN + "Balance" + ChatColor.GRAY + ": " + ChatColor.AQUA + "$" + balance);
                 }
                 return true;
+            //send another player money    
             case "send":
                 if(args.length == 1) {
                     sender.sendMessage(ChatColor.RED + "Please enter what person you wish to send money to.");
@@ -112,8 +116,10 @@ public class CommandManager implements CommandExecutor {
                 ConfigUtil.getBalance().set(target.getDisplayName() + " Balance", ConfigUtil.getBalance().getInt(target.getDisplayName() + "Balance") + amountBeingSent);
                 target.sendMessage(ChatColor.GREEN + "Sent " + ChatColor.AQUA + "$" + amountBeingSent + ChatColor.GREEN + " by " + ChatColor.YELLOW + player.getDisplayName());
                 return true;
+            //shop header    
             case "shop":
                 switch (args[1]) {
+                    //add a item to the shop    
                     case "add":
                         if(player.getItemInHand().getType() == Material.AIR) {
                             sender.sendMessage(ChatColor.RED + "Please be holding the item you wish to put up for sale.");
@@ -141,6 +147,7 @@ public class CommandManager implements CommandExecutor {
                         sender.sendMessage(ChatColor.GREEN + "Posted item to shop.");
                         player.setItemInHand(new ItemStack(Material.AIR));
                         return true;
+                    //lists all things    
                     case "list":
                         sender.sendMessage(ChatColor.LIGHT_PURPLE + "Economy" + ChatColor.GREEN + " Shop" + ChatColor.GRAY + ":");
                         for(Map.Entry<String, Object> entry : ConfigUtil.getShop().getValues(true).entrySet()) {
@@ -171,6 +178,7 @@ public class CommandManager implements CommandExecutor {
                             sender.sendMessage(ChatColor.GREEN + "Item" + ChatColor.GRAY + ": [" + ChatColor.AQUA + item.name() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Durability" + ChatColor.GRAY + ": [" + ChatColor.AQUA + durability + ChatColor.GRAY + "]" + ChatColor.GREEN + " Quantity" + ChatColor.GRAY + ": [" + ChatColor.AQUA + quantity + ChatColor.GRAY + "]" + ChatColor.GREEN + " Seller" + ChatColor.GRAY + ": [" + ChatColor.AQUA + entry.getKey() + ChatColor.GRAY + "]" + ChatColor.GREEN + " Value" + ChatColor.GRAY + ": [" + ChatColor.AQUA + value + ChatColor.GRAY + "]");
                         }
                         return true;
+                    //buys a item    
                     case "buy":
                         if(args.length == 2) {
                             sender.sendMessage(ChatColor.RED + "Please specify which player's item you are trying to buy.");
@@ -207,6 +215,7 @@ public class CommandManager implements CommandExecutor {
                             sender.sendMessage(ChatColor.RED + "There is no active listing from that player.");
                         }
                         return true;
+                    //removes yours or a players listing from the shop    
                     case "remove":
                         switch (args.length) {
                             case 2:
@@ -259,6 +268,7 @@ public class CommandManager implements CommandExecutor {
                 }
                 return true;
             //op commands
+            //set a settings value in game    
             case "set":
                 if(sender.hasPermission("economy.op")) {
                     if(args.length == 1) {
@@ -286,6 +296,7 @@ public class CommandManager implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 }
                 return true;
+            //list all settings and their corresponding values    
             case "list":
                 if(sender.hasPermission("economy.op")) {
                     sender.sendMessage(ChatColor.LIGHT_PURPLE + "Thing " + ChatColor.GREEN + "Settings");
@@ -296,6 +307,7 @@ public class CommandManager implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 }
                 return true;
+            //set a players balance    
             case "setbal":
                 if(sender.hasPermission("economy.op")) {
                     if(args.length == 1) {
@@ -321,6 +333,7 @@ public class CommandManager implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
                 }
                 return true;
+            //reload the config    
             case "reload":
                 if(sender.hasPermission("economy.op")) {
                     ConfigUtil.reload();
